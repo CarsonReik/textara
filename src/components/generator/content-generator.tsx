@@ -30,10 +30,10 @@ const TONES = [
 ] as const
 
 interface ContentGeneratorProps {
-  onCreditsUpdate: (credits: number) => void
+  onCreditsUpdate?: (credits: number) => void
 }
 
-export function ContentGenerator({ onCreditsUpdate }: ContentGeneratorProps) {
+export default function ContentGenerator({ onCreditsUpdate }: ContentGeneratorProps) {
   const [selectedType, setSelectedType] = useState<ContentType>('twitter-thread')
   const [topic, setTopic] = useState('')
   const [tone, setTone] = useState<'professional' | 'casual' | 'funny' | 'inspirational' | 'educational'>('professional')
