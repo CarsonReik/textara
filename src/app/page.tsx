@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { AuthForm } from '@/components/auth/auth-form'
 import { Header } from '@/components/layout/header'
@@ -30,15 +30,7 @@ export default function Home() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Create user profile on first sign up and fetch credits
-  useEffect(() => {
-    if (user) {
-      createUserProfile()
-      fetchCredits()
-    }
-  }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const createUserProfile = async () => {
+  const createUserProfile = useCallback(async () => {
     if (!user) return
 
     // Check if user profile exists
@@ -59,9 +51,9 @@ export default function Home() {
           subscription_tier: 'free'
         })
     }
-  }
+  }, [user])
 
-  const fetchCredits = async () => {
+  const fetchCredits = useCallback(async () => {
     if (!user) return
 
     const { data } = await supabase
@@ -73,7 +65,15 @@ export default function Home() {
     if (data) {
       setCredits(data.credits)
     }
-  }
+  }, [user])
+
+  // Create user profile on first sign up and fetch credits
+  useEffect(() => {
+    if (user) {
+      createUserProfile()
+      fetchCredits()
+    }
+  }, [user, createUserProfile, fetchCredits])
 
   const handleCreditsUpdate = (newCredits: number) => {
     setCredits(newCredits)

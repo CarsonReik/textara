@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { formatCredits } from '@/lib/utils'
@@ -16,13 +16,7 @@ interface HeaderProps {
 export function Header({ user, credits, onCreditsUpdate }: HeaderProps) {
   const [tier, setTier] = useState<string>('free')
 
-  useEffect(() => {
-    if (user) {
-      fetchUserData()
-    }
-  }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     if (!user) return
 
     const { data } = await supabase
@@ -34,7 +28,13 @@ export function Header({ user, credits, onCreditsUpdate }: HeaderProps) {
     if (data) {
       setTier(data.subscription_tier)
     }
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (user) {
+      fetchUserData()
+    }
+  }, [user, fetchUserData])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
