@@ -1,8 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Check, Sparkles } from 'lucide-react'
+import { Check, Sparkles, X } from 'lucide-react'
 
 const plans = [
   {
@@ -81,14 +84,24 @@ const plans = [
 ]
 
 export function PricingPlans() {
+  const [showContactForm, setShowContactForm] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState('')
+  const [contactEmail, setContactEmail] = useState('')
+  const [contactMessage, setContactMessage] = useState('')
+
   const handleUpgrade = (planName: string) => {
-    if (planName === 'Business') {
-      // Contact sales
-      window.open('mailto:hello@textara.app?subject=Business Plan Inquiry&body=Hi! I\'m interested in the Business plan for Textara.', '_blank')
-    } else {
-      // Contact for upgrade
-      window.open(`mailto:hello@textara.app?subject=${planName} Plan Upgrade&body=Hi! I\'d like to upgrade to the ${planName} plan. Please send me payment details.`, '_blank')
-    }
+    setSelectedPlan(planName)
+    setContactMessage(`Hi! I'd like to upgrade to the ${planName} plan. Please send me payment details.`)
+    setShowContactForm(true)
+  }
+
+  const handleSubmitContact = () => {
+    const subject = selectedPlan === 'Business' ? 'Business Plan Inquiry' : `${selectedPlan} Plan Upgrade`
+    const body = `Email: ${contactEmail}\n\n${contactMessage}`
+    window.open(`mailto:carsonreik@gmail.com?subject=${subject}&body=${encodeURIComponent(body)}`, '_blank')
+    setShowContactForm(false)
+    setContactEmail('')
+    setContactMessage('')
   }
 
   return (
@@ -179,6 +192,54 @@ export function PricingPlans() {
       <div className="mt-12 text-center text-sm text-gray-500">
         <p>All plans include a 7-day money-back guarantee. No setup fees. Cancel anytime.</p>
       </div>
+
+      {/* Contact Form Modal */}
+      {showContactForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Upgrade to {selectedPlan}</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowContactForm(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Your Email</label>
+                <Input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={contactEmail}
+                  onChange={(e) => setContactEmail(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-2 block">Message</label>
+                <Textarea
+                  placeholder="Tell us about your needs..."
+                  value={contactMessage}
+                  onChange={(e) => setContactMessage(e.target.value)}
+                  rows={3}
+                />
+              </div>
+
+              <Button
+                onClick={handleSubmitContact}
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                disabled={!contactEmail.trim()}
+              >
+                Send Request
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
