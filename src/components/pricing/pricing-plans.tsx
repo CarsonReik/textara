@@ -84,10 +84,10 @@ export function PricingPlans() {
   const handleUpgrade = (planName: string) => {
     if (planName === 'Business') {
       // Contact sales
-      window.open('mailto:sales@aicontentstudio.com?subject=Business Plan Inquiry', '_blank')
+      window.open('mailto:hello@textara.app?subject=Business Plan Inquiry&body=Hi! I\'m interested in the Business plan for Textara.', '_blank')
     } else {
-      // Handle subscription upgrade
-      alert(`Upgrading to ${planName} plan... (Payment integration coming soon!)`)
+      // Contact for upgrade
+      window.open(`mailto:hello@textara.app?subject=${planName} Plan Upgrade&body=Hi! I\'d like to upgrade to the ${planName} plan. Please send me payment details.`, '_blank')
     }
   }
 
