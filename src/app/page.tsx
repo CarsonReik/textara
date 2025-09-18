@@ -36,7 +36,7 @@ export default function Home() {
       createUserProfile()
       fetchCredits()
     }
-  }, [user])
+  }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const createUserProfile = async () => {
     if (!user) return

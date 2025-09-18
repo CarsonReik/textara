@@ -20,7 +20,7 @@ export function Header({ user, credits, onCreditsUpdate }: HeaderProps) {
     if (user) {
       fetchUserData()
     }
-  }, [user])
+  }, [user]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchUserData = async () => {
     if (!user) return

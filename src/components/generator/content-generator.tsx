@@ -84,9 +84,10 @@ export function ContentGenerator({ onCreditsUpdate }: ContentGeneratorProps) {
       if (data.creditsRemaining !== undefined) {
         onCreditsUpdate(data.creditsRemaining)
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Generation error:', error)
-      alert(error.message || 'Failed to generate content. Please try again.')
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate content. Please try again.'
+      alert(errorMessage)
     } finally {
       setIsGenerating(false)
     }
@@ -252,7 +253,7 @@ export function ContentGenerator({ onCreditsUpdate }: ContentGeneratorProps) {
                     <Sparkles className="h-8 w-8 text-purple-500" />
                   </div>
                   <h3 className="font-semibold text-lg mb-2">Ready to Generate</h3>
-                  <p className="text-sm">Fill out the form and click "Generate Content" to create your AI-powered content.</p>
+                  <p className="text-sm">Fill out the form and click &quot;Generate Content&quot; to create your AI-powered content.</p>
                 </div>
               </div>
             )}
