@@ -6,11 +6,13 @@ import { User } from '@supabase/supabase-js'
 import { Header } from '@/components/layout/header'
 import ContentGenerator from '@/components/generator/content-generator'
 import { AuthForm } from '@/components/auth/auth-form'
+import { LandingPage } from '@/components/landing/landing-page'
 
 export default function HomePage() {
   const [user, setUser] = useState<User | null>(null)
   const [credits, setCredits] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [showAuth, setShowAuth] = useState(false)
 
   useEffect(() => {
     // Get initial session
@@ -67,7 +69,15 @@ export default function HomePage() {
     )
   }
 
-  if (!user) {
+  const handleGetStarted = () => {
+    setShowAuth(true)
+  }
+
+  if (!user && !showAuth) {
+    return <LandingPage onGetStarted={handleGetStarted} />
+  }
+
+  if (!user && showAuth) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <AuthForm />
