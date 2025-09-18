@@ -10,7 +10,7 @@ import { User } from '@supabase/supabase-js'
 export default function Home() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const [credits, setCredits] = useState(0)
+  const [credits, setCredits] = useState(3)
 
   useEffect(() => {
     // Get initial session
