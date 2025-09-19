@@ -70,7 +70,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               <Button
                 onClick={onGetStarted}
                 size="lg"
-                className="group bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-12 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                className="group bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-12 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer"
               >
                 Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" />
@@ -97,10 +97,10 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                 <div className="flex justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
                   {feature.icon}
                 </div>
-                <CardTitle className="text-lg group-hover:text-purple-600 transition-colors duration-200">{feature.title}</CardTitle>
+                <CardTitle className="text-lg text-gray-900 group-hover:text-purple-600 transition-colors duration-200">{feature.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-sm text-gray-600 group-hover:text-gray-700 transition-colors duration-200">
+                <CardDescription className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors duration-200">
                   {feature.description}
                 </CardDescription>
               </CardContent>
@@ -140,7 +140,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             onClick={onGetStarted}
             size="lg"
             variant="secondary"
-            className="group bg-white text-purple-600 hover:bg-gray-50 px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            className="group bg-white text-purple-600 hover:bg-gray-50 px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer"
           >
             Start Creating Now
             <Sparkles className="ml-2 h-5 w-5 group-hover:rotate-12 group-hover:scale-110 transition-transform duration-200" />

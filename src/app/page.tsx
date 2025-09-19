@@ -85,7 +85,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       <Header user={user} credits={credits} onCreditsUpdate={handleCreditsUpdate} />
       <ContentGenerator onCreditsUpdate={handleCreditsUpdate} />
     </div>

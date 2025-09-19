@@ -30,8 +30,16 @@ export function AuthForm() {
             }
           }
         })
-        if (error) throw error
-        setMessage('Check your email for the confirmation link!')
+        if (error) {
+          if (error.message.includes('already registered')) {
+            setMessage('Email already registered. Try signing in instead.')
+            setIsSignUp(false)
+          } else {
+            throw error
+          }
+        } else {
+          setMessage('Check your email for the confirmation link!')
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -49,7 +57,7 @@ export function AuthForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md bounce-in">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Textara
@@ -80,7 +88,7 @@ export function AuthForm() {
             </div>
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 cursor-pointer"
               disabled={isLoading}
             >
               {isLoading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Sign In'}
@@ -97,7 +105,7 @@ export function AuthForm() {
             <button
               type="button"
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-sm text-blue-600 hover:underline"
+              className="text-sm text-blue-600 hover:underline cursor-pointer"
             >
               {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
             </button>
