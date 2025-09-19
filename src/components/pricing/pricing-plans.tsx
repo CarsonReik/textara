@@ -204,7 +204,7 @@ export function PricingPlans() {
 
       {/* Contact Form Modal */}
       {showContactForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-[9999] p-4" style={{position: 'fixed'}}>
           <div className="bg-white rounded-lg max-w-md w-full p-6 bounce-in">
             <div className="text-center">
               <div className="flex justify-between items-center mb-4">
@@ -251,7 +251,7 @@ export function PricingPlans() {
 
       {/* Email Sent Success Modal */}
       {showEmailSent && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-[9999] p-4" style={{position: 'fixed'}}>
           <div className="bg-white rounded-lg max-w-md w-full p-6 bounce-in">
             <div className="text-center">
               <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
