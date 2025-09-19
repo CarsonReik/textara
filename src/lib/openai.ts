@@ -126,8 +126,10 @@ const CONTENT_PROMPTS = {
 export async function generateContent(request: GenerationRequest): Promise<string> {
   // Determine emoji instruction based on tone and additional context
   let emojiInstruction = ''
-  if (request.additionalContext?.toLowerCase().includes('no emoji')) {
-    emojiInstruction = '- Do not use emojis'
+  const context = request.additionalContext?.toLowerCase() || ''
+
+  if (context.includes('no emoji') || context.includes('do not use emoji') || context.includes('without emoji')) {
+    emojiInstruction = '- STRICTLY NO EMOJIS - Use only text and punctuation'
   } else if (request.tone === 'professional' || request.tone === 'educational') {
     emojiInstruction = '- Use minimal or no emojis for professional tone'
   } else if (request.tone === 'funny' || request.tone === 'inspirational') {
@@ -144,13 +146,20 @@ export async function generateContent(request: GenerationRequest): Promise<strin
     .replace('{additionalContext}', request.additionalContext || 'None')
     .replace('{emojiInstruction}', emojiInstruction)
 
+  // Add extra enforcement for no-emoji requests
+  let systemMessage = 'You are an expert content marketer and copywriter. Create high-quality, engaging content that drives results. Be creative, persuasive, and authentic.'
+
+  if (context.includes('no emoji') || context.includes('do not use emoji') || context.includes('without emoji')) {
+    systemMessage += ' IMPORTANT: The user has specifically requested NO EMOJIS. Do not include any emojis (😊🎉📈💪 etc.) in your response. Use only letters, numbers, and punctuation.'
+  }
+
   try {
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
-          content: 'You are an expert content marketer and copywriter. Create high-quality, engaging content that drives results. Be creative, persuasive, and authentic.'
+          content: systemMessage
         },
         {
           role: 'user',
