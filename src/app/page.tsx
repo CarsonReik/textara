@@ -16,17 +16,27 @@ export default function Home() {
 
   const fetchUserCredits = async (userId: string) => {
     try {
-      const { data } = await supabase
+      console.log('Fetching credits for user:', userId)
+      const { data, error } = await supabase
         .from('users')
         .select('credits')
         .eq('id', userId)
         .single()
 
-      if (data) {
+      if (error) {
+        console.error('Supabase error fetching credits:', error)
+        // Set default credits if user doesn't exist in DB yet
+        setCredits(3)
+      } else if (data) {
+        console.log('Credits fetched:', data.credits)
         setCredits(data.credits)
+      } else {
+        console.log('No credit data found, setting default')
+        setCredits(3)
       }
     } catch (error) {
       console.error('Failed to fetch user credits:', error)
+      setCredits(3) // Default credits
     }
   }
 
@@ -61,17 +71,31 @@ export default function Home() {
       console.log('Auth state changed:', event, session?.user?.email)
       setUser(session?.user ?? null)
 
-      if (session?.user) {
-        await fetchUserCredits(session.user.id)
-      } else {
-        setCredits(0)
+      try {
+        if (session?.user) {
+          await fetchUserCredits(session.user.id)
+        } else {
+          setCredits(0)
+        }
+      } catch (error) {
+        console.error('Error in auth state change:', error)
+      } finally {
+        // Always ensure loading is false
+        console.log('Setting loading to false after auth state change')
+        setLoading(false)
       }
-
-      // Ensure loading is false after auth state change
-      setLoading(false)
     })
 
-    return () => subscription.unsubscribe()
+    // Safety timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      console.log('Auth timeout - forcing loading to false')
+      setLoading(false)
+    }, 5000)
+
+    return () => {
+      subscription.unsubscribe()
+      clearTimeout(timeoutId)
+    }
   }, [])
 
   const createUserProfile = useCallback(async () => {
