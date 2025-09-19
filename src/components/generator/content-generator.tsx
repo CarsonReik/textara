@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ContentType } from '@/lib/openai'
 import { Copy, Sparkles, Loader2 } from 'lucide-react'
 import { copyToClipboard } from '@/lib/utils'
+import { PricingPlans } from '@/components/pricing/pricing-plans'
 
 const CONTENT_TYPES = [
   { value: 'twitter-thread', label: 'X Thread', description: 'Multi-post story or tutorial' },
@@ -43,6 +44,7 @@ export default function ContentGenerator({ onCreditsUpdate }: ContentGeneratorPr
   const [generatedContent, setGeneratedContent] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [copySuccess, setCopySuccess] = useState(false)
+  const [showPricing, setShowPricing] = useState(false)
 
   const handleGenerate = async () => {
     if (!topic.trim() || !audience.trim()) return
@@ -87,7 +89,13 @@ export default function ContentGenerator({ onCreditsUpdate }: ContentGeneratorPr
     } catch (error: unknown) {
       console.error('Generation error:', error)
       const errorMessage = error instanceof Error ? error.message : 'Failed to generate content. Please try again.'
-      alert(errorMessage)
+
+      // Show pricing modal for insufficient credits
+      if (errorMessage.includes('Insufficient credits')) {
+        setShowPricing(true)
+      } else {
+        alert(errorMessage)
+      }
     } finally {
       setIsGenerating(false)
     }
@@ -260,6 +268,31 @@ export default function ContentGenerator({ onCreditsUpdate }: ContentGeneratorPr
           </CardContent>
         </Card>
       </div>
+
+      {/* Pricing Modal */}
+      {showPricing && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Upgrade Your Plan</h2>
+                <button
+                  onClick={() => setShowPricing(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="mb-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                <p className="text-orange-800">
+                  <strong>You've run out of credits!</strong> Upgrade to a paid plan to continue generating amazing content.
+                </p>
+              </div>
+              <PricingPlans />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
