@@ -29,9 +29,23 @@ export async function POST(request: NextRequest) {
       apiVersion: '2024-12-18.acacia',
     })
 
-    // Create a simple test session first
+    // Get user email from Supabase
+    const { data: user } = await (await import('@/lib/supabase')).supabase
+      .from('users')
+      .select('email')
+      .eq('id', userId)
+      .single()
+
+    if (!user?.email) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      )
+    }
+
+    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
-      customer_email: 'test@example.com',
+      customer_email: user.email,
       line_items: [{
         price: priceId,
         quantity: 1,
