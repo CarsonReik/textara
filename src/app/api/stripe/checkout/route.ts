@@ -2,11 +2,22 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { supabase } from '@/lib/supabase'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-})
-
 export async function POST(request: NextRequest) {
+  // Initialize Stripe inside the function to ensure env vars are loaded
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY
+
+  if (!stripeSecretKey) {
+    console.error('STRIPE_SECRET_KEY is not set')
+    return NextResponse.json(
+      { error: 'Stripe configuration error' },
+      { status: 500 }
+    )
+  }
+
+  const stripe = new Stripe(stripeSecretKey, {
+    apiVersion: '2024-12-18.acacia',
+  })
+
   try {
     const { priceId, userId } = await request.json()
 
