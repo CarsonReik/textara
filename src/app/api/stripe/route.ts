@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Stripe from 'stripe'
-import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,55 +11,36 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Initialize Stripe
+    // Test environment variables first
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL
+
     if (!stripeSecretKey) {
       return NextResponse.json(
-        { error: 'Stripe configuration error' },
+        { error: 'Stripe secret key not configured' },
         { status: 500 }
       )
     }
 
-    const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: '2024-12-18.acacia',
-    })
-
-    // Get user data from Supabase
-    const { data: user } = await supabase
-      .from('users')
-      .select('email')
-      .eq('id', userId)
-      .single()
-
-    if (!user?.email) {
+    if (!appUrl) {
       return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
+        { error: 'App URL not configured' },
+        { status: 500 }
       )
     }
 
-    // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
-      customer_email: user.email,
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/?canceled=true`,
-      metadata: {
-        userId: userId,
-      },
+    // Return test data for now
+    return NextResponse.json({
+      message: 'Environment variables working',
+      hasStripeKey: !!stripeSecretKey,
+      hasAppUrl: !!appUrl,
+      priceId,
+      userId
     })
-
-    return NextResponse.json({ url: session.url })
   } catch (error) {
-    console.error('Stripe checkout error:', error)
+    console.error('API error:', error)
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
+      { error: 'Failed to process request' },
       { status: 500 }
     )
   }
