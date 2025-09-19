@@ -55,7 +55,7 @@ export function Header({ user, credits, onCreditsUpdate }: HeaderProps) {
   }
 
   return (
-    <header className="border-b bg-white/95 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
+    <header className="border-b bg-white sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Sparkles className="h-8 w-8 text-purple-600" />

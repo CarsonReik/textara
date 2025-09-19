@@ -109,7 +109,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
-            <Card key={index} className="group text-center border-0 shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer bg-white/80 backdrop-blur-sm">
+            <Card key={index} className="group text-center border-0 shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer bg-white">
               <CardHeader>
                 <div className="flex justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
                   {feature.icon}

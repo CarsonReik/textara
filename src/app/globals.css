@@ -74,6 +74,9 @@ body {
   background: var(--background, #ffffff);
   color: var(--foreground, #171717);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* Ensure cards have proper styling */
@@ -89,6 +92,18 @@ body {
 
 * {
   border-color: var(--border);
+}
+
+/* Improve text sharpness */
+.text-transparent {
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+}
+
+/* Reduce blur from transforms */
+.transform {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
 }
 
 .animate-gradient {
