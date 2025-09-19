@@ -142,7 +142,7 @@ export async function generateContent(request: GenerationRequest): Promise<strin
     .replace('{emojiInstruction}', emojiInstruction)
 
   // Default system message with no emojis unless requested
-  let systemMessage = 'You are an expert content marketer and copywriter. Create high-quality, engaging content that drives results. Be creative, persuasive, and authentic. IMPORTANT: Do not use any emojis (😊🎉📈💪🚀 etc.) unless specifically requested by the user. Use only letters, numbers, and punctuation.'
+  let systemMessage = 'You are an expert content marketer and copywriter. Create high-quality, engaging content that drives results. Be creative, persuasive, and authentic. CRITICAL: Do not use ANY emojis anywhere in your response - not at the beginning, middle, or end. Do not start with rocket emojis or any other symbols. Use only letters, numbers, and standard punctuation.'
 
   if (context.includes('use emoji') || context.includes('with emoji') || context.includes('include emoji')) {
     systemMessage = 'You are an expert content marketer and copywriter. Create high-quality, engaging content that drives results. Be creative, persuasive, and authentic. The user has requested emojis, so use them appropriately to enhance the message.'
@@ -165,7 +165,17 @@ export async function generateContent(request: GenerationRequest): Promise<strin
       temperature: 0.7,
     })
 
-    return completion.choices[0]?.message?.content || 'Failed to generate content'
+    let content = completion.choices[0]?.message?.content || 'Failed to generate content'
+
+    // Strip all emojis unless user explicitly requested them
+    if (!context.includes('use emoji') && !context.includes('with emoji') && !context.includes('include emoji')) {
+      // Remove all emojis using comprehensive regex
+      content = content.replace(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA70}-\u{1FAFF}]/gu, '')
+      // Clean up any double spaces left behind
+      content = content.replace(/\s+/g, ' ').trim()
+    }
+
+    return content
   } catch (error) {
     console.error('OpenAI API error:', error)
     throw new Error('Failed to generate content')
