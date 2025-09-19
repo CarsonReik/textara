@@ -15,10 +15,10 @@ const plans = [
     description: 'Perfect for trying out AI content generation',
     credits: '3 generations per month',
     features: [
-      'All content types',
-      'Basic templates',
-      'Email support',
-      'Copy to clipboard'
+      'AI content generation',
+      'All content types (Twitter, LinkedIn, etc.)',
+      'Copy to clipboard',
+      'Basic email support'
     ],
     buttonText: 'Current Plan',
     isPopular: false,
@@ -31,12 +31,10 @@ const plans = [
     description: 'Great for solo creators and small businesses',
     credits: '50 generations per month',
     features: [
-      'All content types',
-      'Advanced templates',
-      'Priority support',
-      'Content history',
-      'Export options',
-      'Team collaboration (2 seats)'
+      'Everything in Free',
+      '50 AI content generations',
+      'Priority email support',
+      'Coming soon: Content history'
     ],
     buttonText: 'Upgrade Now',
     isPopular: true,
@@ -50,12 +48,10 @@ const plans = [
     credits: '500 generations per month',
     features: [
       'Everything in Starter',
-      'Advanced AI models',
-      'Custom templates',
-      'API access',
-      'Analytics dashboard',
-      'Team collaboration (10 seats)',
-      'White-label options'
+      '500 AI content generations',
+      'Coming soon: Advanced AI models',
+      'Coming soon: Team collaboration',
+      'Coming soon: Analytics dashboard'
     ],
     buttonText: 'Upgrade Now',
     isPopular: false,
@@ -69,13 +65,11 @@ const plans = [
     credits: 'Unlimited generations',
     features: [
       'Everything in Pro',
-      'Unlimited generations',
-      'Dedicated account manager',
-      'Custom integrations',
-      'Advanced analytics',
-      'Unlimited team seats',
-      'Priority phone support',
-      'Custom onboarding'
+      'Unlimited AI content generations',
+      'Coming soon: Dedicated account manager',
+      'Coming soon: Custom integrations',
+      'Coming soon: White-label options',
+      'Priority phone support'
     ],
     buttonText: 'Contact Sales',
     isPopular: false,
