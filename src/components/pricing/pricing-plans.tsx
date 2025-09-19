@@ -198,19 +198,8 @@ export function PricingPlans() {
 
       {/* Contact Form Modal */}
       {showContactForm && (
-        <div
-          className="bg-black/50 flex items-center justify-center z-[9999] p-4"
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            width: '100vw',
-            height: '100vh'
-          }}
-        >
-          <div className="bg-white rounded-lg max-w-md w-full p-6 bounce-in" style={{ maxHeight: '90vh', overflowY: 'auto' }}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4" style={{ zIndex: 10000 }}>
+          <div className="bg-white rounded-lg max-w-md w-full p-6 bounce-in">
             <div className="text-center">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Upgrade to {selectedPlan}</h3>
@@ -256,19 +245,8 @@ export function PricingPlans() {
 
       {/* Email Sent Success Modal */}
       {showEmailSent && (
-        <div
-          className="bg-black/50 flex items-center justify-center z-[9999] p-4"
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            width: '100vw',
-            height: '100vh'
-          }}
-        >
-          <div className="bg-white rounded-lg max-w-md w-full p-6 bounce-in" style={{ maxHeight: '90vh', overflowY: 'auto' }}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4" style={{ zIndex: 10000 }}>
+          <div className="bg-white rounded-lg max-w-md w-full p-6 bounce-in">
             <div className="text-center">
               <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
                 <Check className="h-8 w-8 text-green-600" />
