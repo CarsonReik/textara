@@ -124,18 +124,13 @@ const CONTENT_PROMPTS = {
 }
 
 export async function generateContent(request: GenerationRequest): Promise<string> {
-  // Determine emoji instruction based on tone and additional context
-  let emojiInstruction = ''
+  // Default to NO emojis unless explicitly requested
+  let emojiInstruction = '- DO NOT use emojis - Use only text and punctuation'
   const context = request.additionalContext?.toLowerCase() || ''
 
-  if (context.includes('no emoji') || context.includes('do not use emoji') || context.includes('without emoji')) {
-    emojiInstruction = '- STRICTLY NO EMOJIS - Use only text and punctuation'
-  } else if (request.tone === 'professional' || request.tone === 'educational') {
-    emojiInstruction = '- Use minimal or no emojis for professional tone'
-  } else if (request.tone === 'funny' || request.tone === 'inspirational') {
+  // Only allow emojis if explicitly requested
+  if (context.includes('use emoji') || context.includes('with emoji') || context.includes('include emoji')) {
     emojiInstruction = '- Use emojis appropriately to enhance the message'
-  } else {
-    emojiInstruction = '- Use emojis if they add value'
   }
 
   const prompt = CONTENT_PROMPTS[request.contentType]
@@ -146,11 +141,11 @@ export async function generateContent(request: GenerationRequest): Promise<strin
     .replace('{additionalContext}', request.additionalContext || 'None')
     .replace('{emojiInstruction}', emojiInstruction)
 
-  // Add extra enforcement for no-emoji requests
-  let systemMessage = 'You are an expert content marketer and copywriter. Create high-quality, engaging content that drives results. Be creative, persuasive, and authentic.'
+  // Default system message with no emojis unless requested
+  let systemMessage = 'You are an expert content marketer and copywriter. Create high-quality, engaging content that drives results. Be creative, persuasive, and authentic. IMPORTANT: Do not use any emojis (😊🎉📈💪🚀 etc.) unless specifically requested by the user. Use only letters, numbers, and punctuation.'
 
-  if (context.includes('no emoji') || context.includes('do not use emoji') || context.includes('without emoji')) {
-    systemMessage += ' IMPORTANT: The user has specifically requested NO EMOJIS. Do not include any emojis (😊🎉📈💪 etc.) in your response. Use only letters, numbers, and punctuation.'
+  if (context.includes('use emoji') || context.includes('with emoji') || context.includes('include emoji')) {
+    systemMessage = 'You are an expert content marketer and copywriter. Create high-quality, engaging content that drives results. Be creative, persuasive, and authentic. The user has requested emojis, so use them appropriately to enhance the message.'
   }
 
   try {
