@@ -175,21 +175,21 @@ export function PricingPlans() {
 
       <div className="mt-16 text-center">
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 max-w-4xl mx-auto">
-          <h3 className="text-2xl font-bold mb-4">Need a custom solution?</h3>
-          <p className="text-gray-600 mb-6">
+          <h3 className="text-2xl font-bold mb-4 text-gray-900">Need a custom solution?</h3>
+          <p className="text-gray-800 mb-6">
             We offer custom pricing for high-volume users, specialized integrations, and white-label solutions.
           </p>
           <Button
             variant="outline"
             className="border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white"
-            onClick={() => window.open('mailto:sales@aicontentstudio.com?subject=Custom Solution Inquiry', '_blank')}
+            onClick={() => window.open('mailto:carsonreik@gmail.com?subject=Custom Solution Inquiry', '_blank')}
           >
             Contact Sales Team
           </Button>
         </div>
       </div>
 
-      <div className="mt-12 text-center text-sm text-gray-500">
+      <div className="mt-12 text-center text-sm text-gray-700">
         <p>All plans include a 7-day money-back guarantee. No setup fees. Cancel anytime.</p>
       </div>
 
