@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Test environment variables first
+    // Test environment variables
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY
     const appUrl = process.env.NEXT_PUBLIC_APP_URL
 
@@ -22,25 +22,31 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!appUrl) {
-      return NextResponse.json(
-        { error: 'App URL not configured' },
-        { status: 500 }
-      )
-    }
+    // Try importing Stripe dynamically to avoid build issues
+    const Stripe = (await import('stripe')).default
 
-    // Return test data for now
-    return NextResponse.json({
-      message: 'Environment variables working',
-      hasStripeKey: !!stripeSecretKey,
-      hasAppUrl: !!appUrl,
-      priceId,
-      userId
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: '2024-12-18.acacia',
     })
+
+    // Create a simple test session first
+    const session = await stripe.checkout.sessions.create({
+      customer_email: 'test@example.com',
+      line_items: [{
+        price: priceId,
+        quantity: 1,
+      }],
+      mode: 'subscription',
+      success_url: `${appUrl}/?success=true`,
+      cancel_url: `${appUrl}/?canceled=true`,
+      metadata: { userId },
+    })
+
+    return NextResponse.json({ url: session.url })
   } catch (error) {
-    console.error('API error:', error)
+    console.error('Stripe error:', error)
     return NextResponse.json(
-      { error: 'Failed to process request' },
+      { error: `Stripe error: ${error.message}` },
       { status: 500 }
     )
   }
