@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Check, Loader2 } from 'lucide-react'
+import { Check, Loader2, Sparkles } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 const plans = [
