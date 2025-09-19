@@ -96,6 +96,9 @@ export function PricingPlans() {
         return
       }
 
+      console.log('Making request to:', '/api/stripe/checkout')
+      console.log('Request body:', { priceId, userId: user.id })
+
       // Create Stripe checkout session
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
@@ -107,6 +110,9 @@ export function PricingPlans() {
           userId: user.id,
         }),
       })
+
+      console.log('Response status:', response.status)
+      console.log('Response headers:', response.headers)
 
       const data = await response.json()
 
