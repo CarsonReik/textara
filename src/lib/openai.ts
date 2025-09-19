@@ -33,7 +33,7 @@ const CONTENT_PROMPTS = {
     - Start with a hook post (1/X)
     - 5-8 posts total
     - Each post under 280 characters
-    - Use emojis appropriately
+    {emojiInstruction}
     - End with a call-to-action
     - Number each post (1/X, 2/X, etc.)`,
 
@@ -45,7 +45,7 @@ const CONTENT_PROMPTS = {
     Requirements:
     - Under 280 characters
     - Include relevant hashtags
-    - Use emojis if appropriate
+    {emojiInstruction}
     - Make it engaging and shareable`,
 
   'linkedin-post': `Create a LinkedIn post about "{topic}" for {audience}.
@@ -105,7 +105,7 @@ const CONTENT_PROMPTS = {
     Requirements:
     - Engaging hook in first line
     - 2-3 paragraphs
-    - Include emojis
+    {emojiInstruction}
     - Relevant hashtags (10-15)
     - Call-to-action`,
 
@@ -124,12 +124,25 @@ const CONTENT_PROMPTS = {
 }
 
 export async function generateContent(request: GenerationRequest): Promise<string> {
+  // Determine emoji instruction based on tone and additional context
+  let emojiInstruction = ''
+  if (request.additionalContext?.toLowerCase().includes('no emoji')) {
+    emojiInstruction = '- Do not use emojis'
+  } else if (request.tone === 'professional' || request.tone === 'educational') {
+    emojiInstruction = '- Use minimal or no emojis for professional tone'
+  } else if (request.tone === 'funny' || request.tone === 'inspirational') {
+    emojiInstruction = '- Use emojis appropriately to enhance the message'
+  } else {
+    emojiInstruction = '- Use emojis if they add value'
+  }
+
   const prompt = CONTENT_PROMPTS[request.contentType]
     .replace('{topic}', request.topic)
     .replace('{audience}', request.audience)
     .replace('{tone}', request.tone)
     .replace('{keywords}', request.keywords || 'None specified')
     .replace('{additionalContext}', request.additionalContext || 'None')
+    .replace('{emojiInstruction}', emojiInstruction)
 
   try {
     const completion = await openai.chat.completions.create({
