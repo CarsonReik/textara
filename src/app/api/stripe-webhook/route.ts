@@ -1,122 +1,87 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Stripe from 'stripe'
-import { supabase } from '@/lib/supabase'
+import { headers } from 'next/headers'
 
 export async function POST(request: NextRequest) {
-  const stripeSecretKey = process.env.STRIPE_SECRET_KEY
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
-
-  if (!stripeSecretKey || !webhookSecret) {
-    console.error('Missing Stripe configuration')
-    return NextResponse.json(
-      { error: 'Stripe configuration error' },
-      { status: 500 }
-    )
-  }
-
-  const stripe = new Stripe(stripeSecretKey, {
-    apiVersion: '2024-12-18.acacia',
-  })
-  const body = await request.text()
-  const signature = request.headers.get('stripe-signature')!
-
-  let event: Stripe.Event
-
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      webhookSecret
-    )
-  } catch (err) {
-    console.error('Webhook signature verification failed:', err)
-    return NextResponse.json(
-      { error: 'Webhook signature verification failed' },
-      { status: 400 }
-    )
-  }
+    const body = await request.text()
+    const signature = headers().get('stripe-signature')
 
-  try {
-    switch (event.type) {
-      case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.Checkout.Session
-        const userId = session.metadata?.userId
+    if (!signature) {
+      return NextResponse.json(
+        { error: 'Missing stripe-signature header' },
+        { status: 400 }
+      )
+    }
 
-        if (userId && session.subscription) {
-          // Get subscription details
-          const subscription = await stripe.subscriptions.retrieve(
-            session.subscription as string
-          )
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+    if (!webhookSecret) {
+      return NextResponse.json(
+        { error: 'Webhook secret not configured' },
+        { status: 500 }
+      )
+    }
 
-          const priceId = subscription.items.data[0]?.price.id
+    // Import Stripe dynamically to avoid build issues
+    const Stripe = (await import('stripe')).default
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+      apiVersion: '2024-12-18.acacia',
+    })
 
-          // Determine credits based on price ID
-          let credits = 50 // Default for Starter
-          let subscriptionTier = 'starter'
+    let event
+    try {
+      event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
+    } catch (err) {
+      console.error('Webhook signature verification failed:', err)
+      return NextResponse.json(
+        { error: 'Invalid signature' },
+        { status: 400 }
+      )
+    }
 
-          if (priceId === 'price_1S8vVPGpIponA3aZP12ZLNxv') { // Pro
-            credits = 500
-            subscriptionTier = 'pro'
-          } else if (priceId === 'price_1S8vVhGpIponA3aZbgv5ZU0W') { // Business
-            credits = -1 // Unlimited
-            subscriptionTier = 'business'
-          }
+    // Handle successful checkout
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object
+      const userId = session.metadata?.userId
+      const priceId = session.line_items?.data[0]?.price?.id
 
-          // Update user in Supabase
-          await supabase
-            .from('users')
-            .update({
-              credits: credits,
-              subscription_tier: subscriptionTier,
-              stripe_customer_id: session.customer as string,
-              stripe_subscription_id: session.subscription as string,
-            })
-            .eq('id', userId)
-        }
-        break
+      if (!userId) {
+        console.error('No userId in session metadata')
+        return NextResponse.json({ received: true })
       }
 
-      case 'invoice.payment_succeeded': {
-        const invoice = event.data.object as Stripe.Invoice
-
-        if (invoice.subscription && invoice.billing_reason === 'subscription_cycle') {
-          // Renewal payment - reset credits
-          const subscription = await stripe.subscriptions.retrieve(
-            invoice.subscription as string
-          )
-
-          const priceId = subscription.items.data[0]?.price.id
-          let credits = 50 // Default for Starter
-
-          if (priceId === 'price_1S8vVPGpIponA3aZP12ZLNxv') { // Pro
-            credits = 500
-          } else if (priceId === 'price_1S8vVhGpIponA3aZbgv5ZU0W') { // Business
-            credits = -1 // Unlimited
-          }
-
-          // Find user by stripe_subscription_id and reset credits
-          await supabase
-            .from('users')
-            .update({ credits: credits })
-            .eq('stripe_subscription_id', subscription.id)
-        }
-        break
+      // Determine credits based on price ID
+      let creditsToAdd = 0
+      switch (priceId) {
+        case 'price_1S8vVCGpIponA3aZsHWzMmCq': // Starter
+          creditsToAdd = 50
+          break
+        case 'price_1S8vVPGpIponA3aZP12ZLNxv': // Pro
+          creditsToAdd = 500
+          break
+        case 'price_1S8vVhGpIponA3aZbgv5ZU0W': // Business
+          creditsToAdd = 10000 // Unlimited represented as high number
+          break
+        default:
+          console.error('Unknown price ID:', priceId)
+          return NextResponse.json({ received: true })
       }
 
-      case 'customer.subscription.deleted': {
-        const subscription = event.data.object as Stripe.Subscription
+      // Update user credits using dynamic import
+      const { supabase } = await import('@/lib/supabase')
+      const { error } = await supabase
+        .from('users')
+        .update({
+          credits: creditsToAdd,
+          subscription_status: 'active',
+          stripe_customer_id: session.customer,
+          stripe_subscription_id: session.subscription
+        })
+        .eq('id', userId)
 
-        // Downgrade user to free tier
-        await supabase
-          .from('users')
-          .update({
-            credits: 3,
-            subscription_tier: 'free',
-            stripe_customer_id: null,
-            stripe_subscription_id: null,
-          })
-          .eq('stripe_subscription_id', subscription.id)
-        break
+      if (error) {
+        console.error('Failed to update user credits:', error)
+      } else {
+        console.log(`Added ${creditsToAdd} credits to user ${userId}`)
       }
     }
 
