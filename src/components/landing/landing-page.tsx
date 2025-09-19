@@ -66,21 +66,14 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
               Save hours of work and never run out of content ideas again.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <div className="flex justify-center mb-12">
               <Button
                 onClick={onGetStarted}
                 size="lg"
-                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-8 py-3 text-lg"
+                className="group bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 px-12 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
               >
                 Get Started Free
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="px-8 py-3 text-lg border-gray-300 hover:border-purple-600 hover:text-purple-600"
-              >
-                View Examples
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" />
               </Button>
             </div>
 
@@ -99,15 +92,15 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => (
-            <Card key={index} className="text-center border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card key={index} className="group text-center border-0 shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer bg-white/80 backdrop-blur-sm">
               <CardHeader>
-                <div className="flex justify-center mb-4">
+                <div className="flex justify-center mb-4 transform group-hover:scale-110 transition-transform duration-300">
                   {feature.icon}
                 </div>
-                <CardTitle className="text-lg">{feature.title}</CardTitle>
+                <CardTitle className="text-lg group-hover:text-purple-600 transition-colors duration-200">{feature.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-sm">
+                <CardDescription className="text-sm text-gray-600 group-hover:text-gray-700 transition-colors duration-200">
                   {feature.description}
                 </CardDescription>
               </CardContent>
@@ -125,9 +118,9 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-2xl mx-auto">
             {contentTypes.map((type, index) => (
-              <div key={index} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span className="text-sm font-medium text-gray-700">{type}</span>
+              <div key={index} className="group flex items-center gap-2 p-3 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg hover:from-purple-50 hover:to-blue-100 transition-all duration-300 cursor-pointer transform hover:scale-105">
+                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 group-hover:text-green-700 transition-colors duration-200" />
+                <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200">{type}</span>
               </div>
             ))}
           </div>
@@ -147,10 +140,10 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             onClick={onGetStarted}
             size="lg"
             variant="secondary"
-            className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold"
+            className="group bg-white text-purple-600 hover:bg-gray-50 px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
           >
             Start Creating Now
-            <Sparkles className="ml-2 h-5 w-5" />
+            <Sparkles className="ml-2 h-5 w-5 group-hover:rotate-12 group-hover:scale-110 transition-transform duration-200" />
           </Button>
         </div>
       </div>
