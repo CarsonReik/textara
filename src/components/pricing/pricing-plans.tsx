@@ -98,7 +98,10 @@ export function PricingPlans() {
   const handleSubmitContact = () => {
     const subject = selectedPlan === 'Business' ? 'Business Plan Inquiry' : `${selectedPlan} Plan Upgrade`
     const body = `Email: ${contactEmail}\n\n${contactMessage}`
-    window.open(`mailto:carsonreik@gmail.com?subject=${subject}&body=${encodeURIComponent(body)}`, '_blank')
+    const mailtoLink = `mailto:carsonreik@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+
+    // Try to open email client, fallback to copy email to clipboard
+    window.location.href = mailtoLink
     setShowContactForm(false)
     setContactEmail('')
     setContactMessage('')
@@ -182,7 +185,7 @@ export function PricingPlans() {
           <Button
             variant="outline"
             className="border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white"
-            onClick={() => window.open('mailto:carsonreik@gmail.com?subject=Custom Solution Inquiry', '_blank')}
+            onClick={() => window.location.href = 'mailto:carsonreik@gmail.com?subject=' + encodeURIComponent('Custom Solution Inquiry')}
           >
             Contact Sales Team
           </Button>
