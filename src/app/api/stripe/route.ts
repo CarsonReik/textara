@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const { priceId, userId } = await request.json()
+    const { priceId, userId, userEmail } = await request.json()
 
     if (!priceId || !userId) {
       return NextResponse.json(
@@ -29,13 +29,12 @@ export async function POST(request: NextRequest) {
       apiVersion: '2024-12-18.acacia',
     })
 
-    // For now, use a default email to get Stripe working
-    // TODO: Implement proper user email lookup once we solve the import issues
-    const userEmail = 'customer@textara.com'
+    // Use email from frontend, fallback to default if not provided
+    const customerEmail = userEmail || 'customer@textara.com'
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
-      customer_email: userEmail,
+      customer_email: customerEmail,
       line_items: [{
         price: priceId,
         quantity: 1,

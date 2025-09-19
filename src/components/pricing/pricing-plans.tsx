@@ -108,6 +108,7 @@ export function PricingPlans() {
         body: JSON.stringify({
           priceId: priceId,
           userId: user.id,
+          userEmail: user.email,
         }),
       })
 
