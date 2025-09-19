@@ -13,7 +13,7 @@ const plans = [
     price: '$0',
     period: 'forever',
     description: 'Perfect for trying out AI content generation',
-    credits: '3 generations/month',
+    credits: '3 generations per month',
     features: [
       'All content types',
       'Basic templates',
@@ -29,7 +29,7 @@ const plans = [
     price: '$29',
     period: 'month',
     description: 'Great for solo creators and small businesses',
-    credits: '50 generations/month',
+    credits: '50 generations per month',
     features: [
       'All content types',
       'Advanced templates',
@@ -47,7 +47,7 @@ const plans = [
     price: '$79',
     period: 'month',
     description: 'Perfect for growing marketing teams',
-    credits: '500 generations/month',
+    credits: '500 generations per month',
     features: [
       'Everything in Starter',
       'Advanced AI models',
@@ -119,7 +119,7 @@ export function PricingPlans() {
         {plans.map((plan) => (
           <Card
             key={plan.name}
-            className={`relative transition-all duration-300 hover:shadow-lg ${
+            className={`relative transition-all duration-300 hover:shadow-lg h-full flex flex-col ${
               plan.isPopular
                 ? 'border-purple-600 shadow-lg scale-105'
                 : 'border-gray-200 hover:border-purple-300'
@@ -146,8 +146,8 @@ export function PricingPlans() {
               </div>
             </CardHeader>
 
-            <CardContent className="space-y-4">
-              <ul className="space-y-3">
+            <CardContent className="flex-1 flex flex-col">
+              <ul className="space-y-3 flex-1">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-center gap-3">
                     <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
@@ -196,9 +196,9 @@ export function PricingPlans() {
       {/* Contact Form Modal */}
       {showContactForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 bounce-in">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Upgrade to {selectedPlan}</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Upgrade to {selectedPlan}</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -210,7 +210,7 @@ export function PricingPlans() {
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">Your Email</label>
+                <label className="text-sm font-medium mb-2 block text-gray-900">Your Email</label>
                 <Input
                   type="email"
                   placeholder="your@email.com"
@@ -220,7 +220,7 @@ export function PricingPlans() {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Message</label>
+                <label className="text-sm font-medium mb-2 block text-gray-900">Message</label>
                 <Textarea
                   placeholder="Tell us about your needs..."
                   value={contactMessage}
