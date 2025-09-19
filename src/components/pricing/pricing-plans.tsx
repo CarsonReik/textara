@@ -1,12 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { createPortal } from 'react-dom'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Check, Sparkles, X } from 'lucide-react'
+import { Check, Loader2 } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
 
 const plans = [
   {
@@ -23,7 +21,8 @@ const plans = [
     ],
     buttonText: 'Current Plan',
     isPopular: false,
-    disabled: true
+    disabled: true,
+    priceId: null
   },
   {
     name: 'Starter',
@@ -39,7 +38,8 @@ const plans = [
     ],
     buttonText: 'Upgrade Now',
     isPopular: true,
-    disabled: false
+    disabled: false,
+    priceId: 'price_1S8vVCGpIponA3aZsHWzMmCq'
   },
   {
     name: 'Pro',
@@ -56,7 +56,8 @@ const plans = [
     ],
     buttonText: 'Upgrade Now',
     isPopular: false,
-    disabled: false
+    disabled: false,
+    priceId: 'price_1S8vVPGpIponA3aZP12ZLNxv'
   },
   {
     name: 'Business',
@@ -72,37 +73,57 @@ const plans = [
       'Coming soon: White-label options',
       'Priority phone support'
     ],
-    buttonText: 'Contact Sales',
+    buttonText: 'Upgrade Now',
     isPopular: false,
-    disabled: false
+    disabled: false,
+    priceId: 'price_1S8vVhGpIponA3aZbgv5ZU0W'
   }
 ]
 
 export function PricingPlans() {
-  const [showContactForm, setShowContactForm] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState('')
-  const [contactEmail, setContactEmail] = useState('')
-  const [contactMessage, setContactMessage] = useState('')
-  const [showEmailSent, setShowEmailSent] = useState(false)
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
 
-  const handleUpgrade = (planName: string) => {
-    setSelectedPlan(planName)
-    setContactMessage(`Hi! I'd like to upgrade to the ${planName} plan. Please send me payment details.`)
-    setShowContactForm(true)
+  const handleUpgrade = async (planName: string, priceId: string) => {
+    setLoadingPlan(planName)
+
+    try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        alert('Please sign in to upgrade your plan')
+        setLoadingPlan(null)
+        return
+      }
+
+      // Create Stripe checkout session
+      const response = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          priceId: priceId,
+          userId: user.id,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url
+      } else {
+        throw new Error(data.error || 'Failed to create checkout session')
+      }
+    } catch (error) {
+      console.error('Upgrade error:', error)
+      alert('Failed to start checkout process. Please try again.')
+    } finally {
+      setLoadingPlan(null)
+    }
   }
 
-  const handleSubmitContact = () => {
-    // Show success message instead of trying mailto
-    setShowContactForm(false)
-    setShowEmailSent(true)
-    setContactEmail('')
-    setContactMessage('')
-
-    // Auto-hide the success message after 10 seconds
-    setTimeout(() => {
-      setShowEmailSent(false)
-    }, 10000)
-  }
 
   return (
     <div className="container mx-auto px-4 py-16 max-w-7xl">
@@ -157,8 +178,8 @@ export function PricingPlans() {
               </ul>
 
               <Button
-                onClick={() => handleUpgrade(plan.name)}
-                disabled={plan.disabled}
+                onClick={() => plan.priceId && handleUpgrade(plan.name, plan.priceId)}
+                disabled={plan.disabled || loadingPlan === plan.name}
                 className={`w-full mt-6 ${
                   plan.isPopular
                     ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700'
@@ -166,7 +187,14 @@ export function PricingPlans() {
                 }`}
                 variant={plan.disabled ? 'secondary' : 'default'}
               >
-                {plan.buttonText}
+                {loadingPlan === plan.name ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  plan.buttonText
+                )}
               </Button>
             </CardContent>
           </Card>
@@ -182,11 +210,7 @@ export function PricingPlans() {
           <Button
             variant="outline"
             className="border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white"
-            onClick={() => {
-              setSelectedPlan('Custom Solution')
-              setShowEmailSent(true)
-              setTimeout(() => setShowEmailSent(false), 10000)
-            }}
+            onClick={() => alert('For custom solutions, please email: carsonreik@gmail.com')}
           >
             Contact Sales Team
           </Button>
@@ -197,83 +221,6 @@ export function PricingPlans() {
         <p>All plans include a 7-day money-back guarantee. No setup fees. Cancel anytime.</p>
       </div>
 
-      {/* Contact Form Modal */}
-      {showContactForm && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4" style={{ zIndex: 10000 }}>
-          <div className="bg-white rounded-lg max-w-md w-full p-6 bounce-in">
-            <div className="text-center">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Upgrade to {selectedPlan}</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowContactForm(false)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
-                <Sparkles className="h-8 w-8 text-purple-600" />
-              </div>
-
-              <p className="text-gray-700 mb-4">
-                Ready to upgrade? Email us directly:
-              </p>
-
-              <div className="bg-gray-50 p-3 rounded-lg mb-4">
-                <p className="font-mono text-sm text-gray-900 select-all">carsonreik@gmail.com</p>
-              </div>
-
-              <p className="text-sm text-gray-600 mb-6">
-                Include your contact details and mention the <strong>{selectedPlan}</strong> plan.
-              </p>
-
-              <div className="bg-blue-50 p-3 rounded-lg mb-4">
-                <p className="text-sm text-blue-800 font-medium">Stripe integration coming soon!</p>
-              </div>
-
-              <Button
-                onClick={() => setShowContactForm(false)}
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-              >
-                Got it!
-              </Button>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
-
-      {/* Email Sent Success Modal */}
-      {showEmailSent && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4" style={{ zIndex: 10000 }}>
-          <div className="bg-white rounded-lg max-w-md w-full p-6 bounce-in">
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-                <Check className="h-8 w-8 text-green-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Message Received!</h3>
-              <p className="text-gray-700 mb-4">
-                Thanks for your interest! Please email us directly at:
-              </p>
-              <div className="bg-gray-50 p-3 rounded-lg mb-4">
-                <p className="font-mono text-sm text-gray-900 select-all">carsonreik@gmail.com</p>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">
-                Include your contact details and mention the <strong>{selectedPlan}</strong> plan.
-              </p>
-              <Button
-                onClick={() => setShowEmailSent(false)}
-                className="w-full"
-              >
-                Got it!
-              </Button>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
     </div>
   )
 }

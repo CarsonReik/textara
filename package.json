@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@stripe/stripe-js": "^7.9.0",
     "@supabase/supabase-js": "^2.57.4",
     "clsx": "^2.1.1",
     "lucide-react": "^0.544.0",
@@ -16,6 +17,7 @@
     "openai": "^5.21.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "stripe": "^18.5.0",
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
