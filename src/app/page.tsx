@@ -4,7 +4,8 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { AuthForm } from '@/components/auth/auth-form'
 import { Header } from '@/components/layout/header'
-import { ContentGenerator } from '@/components/generator/content-generator'
+import ContentGenerator from '@/components/generator/content-generator'
+import { LandingPage } from '@/components/landing/landing-page'
 import { User } from '@supabase/supabase-js'
 
 export default function Home() {
