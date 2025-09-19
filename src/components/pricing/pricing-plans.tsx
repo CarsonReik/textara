@@ -206,44 +206,43 @@ export function PricingPlans() {
       {showContactForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6 bounce-in">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Upgrade to {selectedPlan}</h3>
+            <div className="text-center">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Upgrade to {selectedPlan}</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowContactForm(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
+                <Sparkles className="h-8 w-8 text-purple-600" />
+              </div>
+
+              <p className="text-gray-700 mb-4">
+                Ready to upgrade? Email us directly:
+              </p>
+
+              <div className="bg-gray-50 p-3 rounded-lg mb-4">
+                <p className="font-mono text-sm text-gray-900 select-all">carsonreik@gmail.com</p>
+              </div>
+
+              <p className="text-sm text-gray-600 mb-6">
+                Include your contact details and mention the <strong>{selectedPlan}</strong> plan.
+              </p>
+
+              <div className="bg-blue-50 p-3 rounded-lg mb-4">
+                <p className="text-sm text-blue-800 font-medium">Stripe integration coming soon!</p>
+              </div>
+
               <Button
-                variant="ghost"
-                size="sm"
                 onClick={() => setShowContactForm(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block text-gray-900">Your Email</label>
-                <Input
-                  type="email"
-                  placeholder="your@email.com"
-                  value={contactEmail}
-                  onChange={(e) => setContactEmail(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block text-gray-900">Message</label>
-                <Textarea
-                  placeholder="Tell us about your needs..."
-                  value={contactMessage}
-                  onChange={(e) => setContactMessage(e.target.value)}
-                  rows={3}
-                />
-              </div>
-
-              <Button
-                onClick={handleSubmitContact}
                 className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-                disabled={!contactEmail.trim()}
               >
-                Send Request
+                Got it!
               </Button>
             </div>
           </div>
