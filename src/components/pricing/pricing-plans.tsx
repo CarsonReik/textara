@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -197,7 +198,7 @@ export function PricingPlans() {
       </div>
 
       {/* Contact Form Modal */}
-      {showContactForm && (
+      {showContactForm && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4" style={{ zIndex: 10000 }}>
           <div className="bg-white rounded-lg max-w-md w-full p-6 bounce-in">
             <div className="text-center">
@@ -240,11 +241,12 @@ export function PricingPlans() {
               </Button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Email Sent Success Modal */}
-      {showEmailSent && (
+      {showEmailSent && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4" style={{ zIndex: 10000 }}>
           <div className="bg-white rounded-lg max-w-md w-full p-6 bounce-in">
             <div className="text-center">
@@ -269,7 +271,8 @@ export function PricingPlans() {
               </Button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   )
