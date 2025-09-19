@@ -96,11 +96,11 @@ export function PricingPlans() {
         return
       }
 
-      console.log('Making request to:', '/api/create-subscription')
+      console.log('Making request to:', '/api/stripe')
       console.log('Request body:', { priceId, userId: user.id })
 
       // Create Stripe checkout session
-      const response = await fetch('/api/create-subscription', {
+      const response = await fetch('/api/stripe', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
