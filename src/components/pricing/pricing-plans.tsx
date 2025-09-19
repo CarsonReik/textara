@@ -88,6 +88,7 @@ export function PricingPlans() {
   const [selectedPlan, setSelectedPlan] = useState('')
   const [contactEmail, setContactEmail] = useState('')
   const [contactMessage, setContactMessage] = useState('')
+  const [showEmailSent, setShowEmailSent] = useState(false)
 
   const handleUpgrade = (planName: string) => {
     setSelectedPlan(planName)
@@ -96,15 +97,16 @@ export function PricingPlans() {
   }
 
   const handleSubmitContact = () => {
-    const subject = selectedPlan === 'Business' ? 'Business Plan Inquiry' : `${selectedPlan} Plan Upgrade`
-    const body = `Email: ${contactEmail}\n\n${contactMessage}`
-    const mailtoLink = `mailto:carsonreik@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-
-    // Try to open email client, fallback to copy email to clipboard
-    window.location.href = mailtoLink
+    // Show success message instead of trying mailto
     setShowContactForm(false)
+    setShowEmailSent(true)
     setContactEmail('')
     setContactMessage('')
+
+    // Auto-hide the success message after 10 seconds
+    setTimeout(() => {
+      setShowEmailSent(false)
+    }, 10000)
   }
 
   return (
@@ -185,7 +187,11 @@ export function PricingPlans() {
           <Button
             variant="outline"
             className="border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white"
-            onClick={() => window.location.href = 'mailto:carsonreik@gmail.com?subject=' + encodeURIComponent('Custom Solution Inquiry')}
+            onClick={() => {
+              setSelectedPlan('Custom Solution')
+              setShowEmailSent(true)
+              setTimeout(() => setShowEmailSent(false), 10000)
+            }}
           >
             Contact Sales Team
           </Button>
@@ -238,6 +244,35 @@ export function PricingPlans() {
                 disabled={!contactEmail.trim()}
               >
                 Send Request
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Email Sent Success Modal */}
+      {showEmailSent && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 bounce-in">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                <Check className="h-8 w-8 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Message Received!</h3>
+              <p className="text-gray-700 mb-4">
+                Thanks for your interest! Please email us directly at:
+              </p>
+              <div className="bg-gray-50 p-3 rounded-lg mb-4">
+                <p className="font-mono text-sm text-gray-900 select-all">carsonreik@gmail.com</p>
+              </div>
+              <p className="text-sm text-gray-600 mb-4">
+                Include your contact details and mention the <strong>{selectedPlan}</strong> plan.
+              </p>
+              <Button
+                onClick={() => setShowEmailSent(false)}
+                className="w-full"
+              >
+                Got it!
               </Button>
             </div>
           </div>
